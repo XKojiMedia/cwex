@@ -1,4 +1,5 @@
-import { CweConfig, ManifestIcons, ExtensionInfo } from '../config';
+import { CweConfig, ManifestIcons, ExtensionInfo, ExtensionCompiler } from '../config';
+const webExt = require('web-ext').default;
 
 interface MozillaAddonBrowserAction {
   default_icon?: ManifestIcons;
@@ -75,3 +76,11 @@ export const generateExtensionInfo = async(config: CweConfig): Promise<Extension
 };
 
 export default generateExtensionInfo;
+
+export const compileExtension: ExtensionCompiler = async (opts) => {
+  return await webExt.cmd.build({
+    sourceDir: opts.extensionFilesDir,
+    overwriteDest: true,
+    artifactsDir: opts.extensionBuildOutputDir,
+  });
+};

@@ -75,7 +75,15 @@ export interface ExtensionInfo {
   fileType: string;
 }
 
-export type ExtensionInfoBuilder = (config: CweConfig) => Promise<ExtensionInfo>;
+export type ExtensionInfoGenerator = (config: CweConfig) => Promise<ExtensionInfo>;
+
+export interface ExtensionCompilerOption {
+  extensionFilesDir: string;
+  extensionBuildOutputDir: string;
+  config: CweConfig;
+}
+
+export type ExtensionCompiler = (opts: ExtensionCompilerOption) => Promise<boolean>;
 
 export const defaultConfig: CweConfig = {
   include: [],

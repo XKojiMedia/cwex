@@ -1,6 +1,6 @@
 import { resolve, basename } from 'path';
 import { remove, copy, outputFile } from 'fs-extra';
-import { getConfig, ExtensionInfoBuilder } from '../config';
+import { getConfig, ExtensionInfoGenerator, ExtensionCompiler } from '../config';
 import { getFiles, getResolvedTargetModule } from '../utils';
 
 export const buildProject = async ({ configPath = '' } = {}) => {
@@ -22,7 +22,8 @@ export const buildProject = async ({ configPath = '' } = {}) => {
       console.log('No module found for target:', target);
       continue;
     }
-    const generateExtensionInfo: ExtensionInfoBuilder = require(resolvedTargetModule).generateExtensionInfo;
+    const targetModule = require(resolvedTargetModule);
+    const generateExtensionInfo: ExtensionInfoGenerator = targetModule.generateExtensionInfo;
 
     // TODO: Build target steps: beforeBuild:target, afterBuild:target
 
@@ -53,6 +54,17 @@ export const buildProject = async ({ configPath = '' } = {}) => {
     console.log('Copying manifest file to output directory..');
     const manifestOutputPath = resolve(extensionOutDir, extensionInfo.fileName);
     outputFile(manifestOutputPath, extensionInfo.content, 'utf8');
+
+    const compileExtension: ExtensionCompiler = targetModule.compileExtension;
+
+    if (compileExtension) {
+      console.log('Compiling extension..');
+      await compileExtension({
+        config,
+        extensionFilesDir: extensionOutDir,
+        extensionBuildOutputDir: resolve(outDir, `${target}-build`),
+      });
+    }
   
     console.log('Build completed.');
   }
