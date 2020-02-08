@@ -1,7 +1,5 @@
-import { buildProject } from './commands/build';
+export { buildProject } from './commands/build';
 
-// binary file
-console.log('We compile');
 // inquirer
 
 // scaffold project
@@ -17,4 +15,3 @@ console.log('We compile');
     includes**
     manifest.json
 */
-buildProject();
