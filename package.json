@@ -2,7 +2,28 @@
   "name": "cwe",
   "version": "1.0.0",
   "description": "A CLI tool for creating and managing cross-platform browser extensions",
-  "main": "index.js",
+  "bin": "dist/cli.js",
+  "main": "dist/index.js",
   "author": "Samuel Imolorhe <samuelimolo4real@gmail.com> (https://sirmuel.design/)",
-  "license": "MIT"
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc -w"
+  },
+  "dependencies": {
+    "@types/glob": "^7.1.1",
+    "commander": "^4.1.1",
+    "find-up": "^4.1.0",
+    "fs-extra": "^8.1.0",
+    "globby": "^11.0.0",
+    "yaml": "^1.7.2"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^8.0.1",
+    "@types/node": "^13.7.0",
+    "@types/yaml": "^1.2.0",
+    "tslint": "^6.0.0",
+    "tslint-config-airbnb": "^5.11.2",
+    "typescript": "^3.7.5"
+  }
 }
