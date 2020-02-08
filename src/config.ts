@@ -57,7 +57,7 @@ export interface CweConfig {
   exclude: string[];
 
   // target browser extensions
-  target: string[];
+  targets: string[];
 
   // root directory to find files and directories
   rootDir: string;
@@ -75,10 +75,12 @@ export interface ExtensionInfo {
   fileType: string;
 }
 
+export type ExtensionInfoBuilder = (config: CweConfig) => Promise<ExtensionInfo>;
+
 export const defaultConfig: CweConfig = {
   include: [],
   exclude: [],
-  target: [...Object.values(EXTENSION_TARGET)],
+  targets: [...Object.values(EXTENSION_TARGET), 'x'],
   rootDir: './',
   outDir: 'out',
 };

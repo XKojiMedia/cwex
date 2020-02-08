@@ -1,32 +1,32 @@
 import { CweConfig, ManifestIcons, ExtensionInfo } from '../config';
 
-interface ChromeExtensionBrowserAction {
+interface MozillaAddonBrowserAction {
   default_icon?: ManifestIcons;
 }
-interface ChromeExtensionBackground {
+interface MozillaAddonBackground {
   scripts: string[];
 }
-interface ChromeExtensionOptionsUi {
+interface MozillaAddonOptionsUi {
   page: string;
   open_in_tab: boolean;
 }
 
-interface ChromeExtension {
+interface MozillaAddon {
   manifest_version: 2;
   name: string;
   short_name: string;
   description: string;
   version: string;
   icons: ManifestIcons;
-  browser_action: ChromeExtensionBrowserAction;
+  browser_action: MozillaAddonBrowserAction;
   permissions: string[];
   content_security_policy: string;
-  background: ChromeExtensionBackground;
-  options_ui?: ChromeExtensionOptionsUi;
+  background: MozillaAddonBackground;
+  options_ui?: MozillaAddonOptionsUi;
   offline_enabled: boolean;
 }
 
-const buildBrowserAction = (config: CweConfig): ChromeExtensionBrowserAction => {
+const buildBrowserAction = (config: CweConfig): MozillaAddonBrowserAction => {
   if (config.manifestOptions?.browserAction) {
     return {
       default_icon: config.manifestOptions.browserAction.defaultIcon,
@@ -35,7 +35,7 @@ const buildBrowserAction = (config: CweConfig): ChromeExtensionBrowserAction => 
   return {};
 };
 
-const buildOptionsUi = (config: CweConfig): ChromeExtensionOptionsUi | undefined => {
+const buildOptionsUi = (config: CweConfig): MozillaAddonOptionsUi | undefined => {
   if (config.manifestOptions?.settingsOptions) {
     return {
       page: config.manifestOptions.settingsOptions.page,
@@ -45,7 +45,7 @@ const buildOptionsUi = (config: CweConfig): ChromeExtensionOptionsUi | undefined
   return undefined;
 };
 
-const buildExtensionData = (config: CweConfig): ChromeExtension | null => {
+const buildExtensionData = (config: CweConfig): MozillaAddon | null => {
   if (!config.manifestOptions) {
     return null;
   }

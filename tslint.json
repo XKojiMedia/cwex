@@ -5,7 +5,8 @@
     ],
     "jsRules": {},
     "rules": {
-        "import-name": false
+        "import-name": false,
+        "max-line-length": 120
     },
     "rulesDirectory": []
 }
