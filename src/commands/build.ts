@@ -1,7 +1,7 @@
 import { resolve, basename } from 'path';
 import { remove, copy, outputFile } from 'fs-extra';
 import { getConfig, ExtensionInfoGenerator, ExtensionCompiler } from '../config';
-import { getFiles, getResolvedTargetModule } from '../utils';
+import { getFiles, getResolvedTargetModule, getResolvedModule } from '../utils';
 
 export const buildProject = async ({ configPath = '' } = {}) => {
   console.log(process.cwd());
@@ -25,9 +25,8 @@ export const buildProject = async ({ configPath = '' } = {}) => {
     const targetModule = require(resolvedTargetModule);
     const generateExtensionInfo: ExtensionInfoGenerator = targetModule.generateExtensionInfo;
 
-    // TODO: Build target steps: beforeBuild:target, afterBuild:target
+    // TODO: Build target steps: beforeBuild:target, afterBuild:target, preCompile:target, postCompile:target
 
-    console.log(generateExtensionInfo);
     // Compile templates with config data
     const extensionInfo = await generateExtensionInfo(config);
     console.log(`${target} extension info:`, extensionInfo);
@@ -64,6 +63,19 @@ export const buildProject = async ({ configPath = '' } = {}) => {
     const compileExtension: ExtensionCompiler = targetModule.compileExtension;
 
     if (compileExtension) {
+      if (config.beforeCompile) {
+        const resolvedBeforeCompileModule = getResolvedModule(resolve(process.cwd(), config.beforeCompile));
+        console.log(resolvedBeforeCompileModule);
+        if (resolvedBeforeCompileModule) {
+          console.log('Executing beforeCompile script..');
+          const beforeCompileModule = require(resolvedBeforeCompileModule);
+          console.log(beforeCompileModule);
+          await beforeCompileModule({
+            config,
+            extensionFilesDir: extensionOutDir,
+          });
+        }
+      }
       console.log('Compiling extension..');
       await compileExtension({
         config,

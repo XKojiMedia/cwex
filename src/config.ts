@@ -53,7 +53,7 @@ export interface CweConfig {
   // array of glob matching patterns of files and directories
   include: string[];
 
-  // array of glob matching patterns of files and directories
+  // array of regular expressions matching  files and directories to be excluded
   exclude: string[];
 
   // target browser extensions
@@ -64,6 +64,9 @@ export interface CweConfig {
 
   // directory where the build would be compiled to
   outDir: string;
+
+  // path to script to execute before compiling extension
+  beforeCompile?: string;
 
   // Manifest file options
   manifestOptions?: ManifestOptions;
