@@ -1,4 +1,4 @@
-import { CweConfig, ManifestIcons, ExtensionInfo, ExtensionCompiler } from '../config';
+import { CwexConfig, ManifestIcons, ExtensionInfo, ExtensionCompiler } from '../config';
 const webExt = require('web-ext').default;
 
 interface MozillaAddonBrowserAction {
@@ -27,7 +27,7 @@ interface MozillaAddon {
   offline_enabled: boolean;
 }
 
-const buildBrowserAction = (config: CweConfig): MozillaAddonBrowserAction => {
+const buildBrowserAction = (config: CwexConfig): MozillaAddonBrowserAction => {
   if (config.manifestOptions?.browserAction) {
     return {
       default_icon: config.manifestOptions.browserAction.defaultIcon,
@@ -36,7 +36,7 @@ const buildBrowserAction = (config: CweConfig): MozillaAddonBrowserAction => {
   return {};
 };
 
-const buildOptionsUi = (config: CweConfig): MozillaAddonOptionsUi | undefined => {
+const buildOptionsUi = (config: CwexConfig): MozillaAddonOptionsUi | undefined => {
   if (config.manifestOptions?.settingsOptions) {
     return {
       page: config.manifestOptions.settingsOptions.page,
@@ -46,7 +46,7 @@ const buildOptionsUi = (config: CweConfig): MozillaAddonOptionsUi | undefined =>
   return undefined;
 };
 
-const buildExtensionData = (config: CweConfig): MozillaAddon | null => {
+const buildExtensionData = (config: CwexConfig): MozillaAddon | null => {
   if (!config.manifestOptions) {
     return null;
   }
@@ -67,7 +67,7 @@ const buildExtensionData = (config: CweConfig): MozillaAddon | null => {
   };
 };
 
-export const generateExtensionInfo = async(config: CweConfig): Promise<ExtensionInfo> => {
+export const generateExtensionInfo = async(config: CwexConfig): Promise<ExtensionInfo> => {
   return {
     content: JSON.stringify(buildExtensionData(config), null, 2),
     fileName: 'manifest.json',

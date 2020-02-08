@@ -1,9 +1,9 @@
 {
-  "name": "cwe",
+  "name": "cwex",
   "version": "1.0.0",
   "description": "A CLI tool for creating and managing cross-platform browser extensions",
   "bin": {
-    "cwe": "dist/cli.js"
+    "cwex": "dist/cli.js"
   },
   "main": "dist/index.js",
   "author": "Samuel Imolorhe <samuelimolo4real@gmail.com> (https://sirmuel.design/)",

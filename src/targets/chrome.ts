@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { CweConfig, ManifestIcons, ExtensionInfo, ExtensionCompilerOption, ExtensionCompiler } from '../config';
+import { CwexConfig, ManifestIcons, ExtensionInfo, ExtensionCompilerOption, ExtensionCompiler } from '../config';
 import archiver from 'archiver';
 import { ensureFile } from 'fs-extra';
 
@@ -30,7 +30,7 @@ interface ChromeExtension {
   offline_enabled: boolean;
 }
 
-const buildBrowserAction = (config: CweConfig): ChromeExtensionBrowserAction => {
+const buildBrowserAction = (config: CwexConfig): ChromeExtensionBrowserAction => {
   if (config.manifestOptions?.browserAction) {
     return {
       default_icon: config.manifestOptions.browserAction.defaultIcon,
@@ -39,7 +39,7 @@ const buildBrowserAction = (config: CweConfig): ChromeExtensionBrowserAction => 
   return {};
 };
 
-const buildOptionsUi = (config: CweConfig): ChromeExtensionOptionsUi | undefined => {
+const buildOptionsUi = (config: CwexConfig): ChromeExtensionOptionsUi | undefined => {
   if (config.manifestOptions?.settingsOptions) {
     return {
       page: config.manifestOptions.settingsOptions.page,
@@ -49,7 +49,7 @@ const buildOptionsUi = (config: CweConfig): ChromeExtensionOptionsUi | undefined
   return undefined;
 };
 
-const buildExtensionData = (config: CweConfig): ChromeExtension | null => {
+const buildExtensionData = (config: CwexConfig): ChromeExtension | null => {
   if (!config.manifestOptions) {
     return null;
   }
@@ -70,7 +70,7 @@ const buildExtensionData = (config: CweConfig): ChromeExtension | null => {
   };
 };
 
-export const generateExtensionInfo = async(config: CweConfig): Promise<ExtensionInfo> => {
+export const generateExtensionInfo = async(config: CwexConfig): Promise<ExtensionInfo> => {
   return {
     content: JSON.stringify(buildExtensionData(config), null, 2),
     fileName: 'manifest.json',

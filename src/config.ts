@@ -8,8 +8,8 @@ export enum EXTENSION_TARGET {
 }
 
 export const CONFIG_FILE_NAMES = [
-  'cwe.yml',
-  '.cwerc',
+  'cwex.yml',
+  '.cwexrc',
 ];
 
 interface ManifestIconMap {
@@ -49,7 +49,7 @@ export interface ManifestOptions {
   offlineEnabled: boolean;
 }
 
-export interface CweConfig {
+export interface CwexConfig {
   // array of glob matching patterns of files and directories
   include: string[];
 
@@ -78,17 +78,17 @@ export interface ExtensionInfo {
   fileType: string;
 }
 
-export type ExtensionInfoGenerator = (config: CweConfig) => Promise<ExtensionInfo>;
+export type ExtensionInfoGenerator = (config: CwexConfig) => Promise<ExtensionInfo>;
 
 export interface ExtensionCompilerOption {
   extensionFilesDir: string;
   extensionBuildOutputDir: string;
-  config: CweConfig;
+  config: CwexConfig;
 }
 
 export type ExtensionCompiler = (opts: ExtensionCompilerOption) => Promise<boolean>;
 
-export const defaultConfig: CweConfig = {
+export const defaultConfig: CwexConfig = {
   include: [],
   exclude: [],
   targets: [...Object.values(EXTENSION_TARGET), 'x'],
