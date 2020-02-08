@@ -48,7 +48,13 @@ export const buildProject = async ({ configPath = '' } = {}) => {
 
     console.log('Copying included files to output directory..');
     for (const file of includedFiles) {
-      await copy(file, resolve(extensionOutDir, basename(file)));
+      await copy(file, resolve(extensionOutDir, basename(file)), {
+        filter: (src) => {
+          return !config.exclude.find(excludeRegex => {
+            return new RegExp(excludeRegex).test(src);
+          });
+        }
+      });
     }
   
     console.log('Copying manifest file to output directory..');
