@@ -2,12 +2,14 @@ import { resolve, basename } from 'path';
 import { remove, copy, outputFile } from 'fs-extra';
 import { getConfig, ExtensionInfoGenerator, ExtensionCompiler, CwexConfig } from '../config';
 import { getFiles, getResolvedTargetModule, getResolvedModule } from '../utils';
+import log, { enableLogging } from '../utils/logger';
 
+enableLogging();
 export const buildTarget = async (config: CwexConfig, target: string, { outDir = '', _require = require as any }) => {
   const resolvedTargetModule = getResolvedTargetModule(target);
-    console.log('resolved module:', resolvedTargetModule);
+    log('resolved module:', resolvedTargetModule);
     if (!resolvedTargetModule) {
-      console.log('No module found for target:', target);
+      log('No module found for target:', target);
       return;
     }
     const targetModule = _require(resolvedTargetModule);
@@ -17,12 +19,12 @@ export const buildTarget = async (config: CwexConfig, target: string, { outDir =
 
     // Compile templates with config data
     const extensionInfo = await generateExtensionInfo(config);
-    console.log(`${target} extension info:`, extensionInfo);
+    log(`${target} extension info:`, extensionInfo);
 
     const extensionOutDir = resolve(outDir, `${target}-files`);
-    console.log('Resolved output directory:', outDir);
+    log('Resolved output directory:', outDir);
 
-    console.log('Removing output directory..');
+    log('Removing output directory..');
     await remove(extensionOutDir);
 
     const includedFiles = await getFiles(config.include, {
@@ -32,9 +34,9 @@ export const buildTarget = async (config: CwexConfig, target: string, { outDir =
       absolute: true,
       cwd: resolve(config.rootDir),
     });
-    console.log('Included files:', includedFiles);
+    log('Included files:', includedFiles);
 
-    console.log('Copying included files to output directory..');
+    log('Copying included files to output directory..');
     for (const file of includedFiles) {
       await copy(file, resolve(extensionOutDir, basename(file)), {
         filter: (src) => {
@@ -45,7 +47,7 @@ export const buildTarget = async (config: CwexConfig, target: string, { outDir =
       });
     }
   
-    console.log('Copying manifest file to output directory..');
+    log('Copying manifest file to output directory..');
     const manifestOutputPath = resolve(extensionOutDir, extensionInfo.fileName);
     outputFile(manifestOutputPath, extensionInfo.content, 'utf8');
 
@@ -55,7 +57,7 @@ export const buildTarget = async (config: CwexConfig, target: string, { outDir =
       if (config.beforeCompile) {
         const resolvedBeforeCompileModule = getResolvedModule(resolve(process.cwd(), config.beforeCompile));
         if (resolvedBeforeCompileModule) {
-          console.log('Executing beforeCompile script..', resolvedBeforeCompileModule);
+          log('Executing beforeCompile script..', resolvedBeforeCompileModule);
           const beforeCompileModule = _require(resolvedBeforeCompileModule);
           await beforeCompileModule({
             config,
@@ -63,7 +65,7 @@ export const buildTarget = async (config: CwexConfig, target: string, { outDir =
           });
         }
       }
-      console.log('Compiling extension..');
+      log('Compiling extension..');
       await compileExtension({
         config,
         extensionFilesDir: extensionOutDir,
@@ -71,21 +73,21 @@ export const buildTarget = async (config: CwexConfig, target: string, { outDir =
       });
     }
   
-    console.log('Build completed.');
+    log('Build completed.');
 };
 
 export const buildProject = async ({ configPath = '', _require = require as any } = {}) => {
-  console.log('Current working directory:', process.cwd());
+  log('Current working directory:', process.cwd());
   const config = await getConfig(configPath);
-  console.log('Config:', config);
+  log('Config:', config);
 
   const outDir = resolve(config.rootDir, config.outDir);
-  console.log('Resolved output directory:', outDir);
+  log('Resolved output directory:', outDir);
 
-  console.log('Removing output directory..');
+  log('Removing output directory..');
   await remove(outDir);
 
-  console.log(`Building for ${config.targets.length} targets:`, config.targets);
+  log(`Building for ${config.targets.length} targets:`, config.targets);
   for (const target of config.targets) {
     let targetConfig = config;
     if (config.targetOptions && config.targetOptions[target]) {

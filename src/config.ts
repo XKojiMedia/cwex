@@ -1,6 +1,7 @@
 import { readFileSync } from 'fs';
 import findUp from 'find-up';
 import yaml from 'yaml';
+import log from './utils/logger';
 
 export enum EXTENSION_TARGET {
   CHROME = 'chrome',
@@ -235,15 +236,15 @@ export const getConfig = async (configPath = '') => {
   const pathToConfig = configPath ? configPath : await getConfigFile();
   let config = { ...defaultConfig };
   if (pathToConfig) {
-    console.log('Config file found:', pathToConfig);
+    log('Config file found:', pathToConfig);
     try {
       config = { ...config, ...yaml.parse(readFileSync(pathToConfig, 'utf8')) };
     } catch (err) {
-      console.error('The config file is invalid. Check that you have a valid YAML file.');
+      log('The config file is invalid. Check that you have a valid YAML file.');
       throw err;
     }
   } else {
-    console.log('Config file not found.');
+    log('Config file not found.');
   }
 
   return config;

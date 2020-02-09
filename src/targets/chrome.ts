@@ -11,6 +11,7 @@ import {
 } from '../config';
 import archiver from 'archiver';
 import { ensureFile } from 'fs-extra';
+import log from '../utils/logger';
 
 interface ChromeExtensionBrowserAction {
   default_icon?: ManifestIcons;
@@ -126,8 +127,8 @@ export const compileExtension: ExtensionCompiler = async(opts: ExtensionCompiler
     // listen for all archive data to be written
     // 'close' event is fired only when a file descriptor is involved
     output.on('close', () => {
-      // console.log(archive.pointer() + ' total bytes');
-      // console.log('archiver has been finalized and the output file descriptor has closed.');
+      // log(archive.pointer() + ' total bytes');
+      // log('archiver has been finalized and the output file descriptor has closed.');
       return resolve(true);
     });
 
@@ -135,15 +136,15 @@ export const compileExtension: ExtensionCompiler = async(opts: ExtensionCompiler
     // It is not part of this library but rather from the NodeJS Stream API.
     // @see: https://nodejs.org/api/stream.html#stream_event_end
     output.on('end', () => {
-      console.log('Data has been drained');
+      log('Data has been drained');
       return resolve(true);
     });
-    
+
     // good practice to catch warnings (ie stat failures and other non-blocking errors)
     archive.on('warning', (err) => {
       if (err.code === 'ENOENT') {
         // log warning
-        console.log(err);
+        log(err);
       } else {
         // throw error
         return reject(err);
