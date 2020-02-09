@@ -35,8 +35,18 @@ describe('config', () => {
       (yaml.parse as any).mockImplementation(() => {
         return configFromFile;
       });
-      const config = await getConfig();
+      const config = await getConfig('path/to/config');
       expect(config).toMatchSnapshot();
+    });
+    it('should throw an error if config file is invalid', async() => {
+      (findUp as jest.MockedFunction<typeof findUp>).mockImplementationOnce(async() => {
+        return 'path/to/config/file';
+      });
+      (yaml.parse as any).mockImplementation(() => {
+        throw new Error('fake!');
+      });
+
+      await expect(getConfig('path/to/config')).rejects.toThrow();
     });
   });
 });
