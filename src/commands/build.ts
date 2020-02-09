@@ -1,28 +1,16 @@
 import { resolve, basename } from 'path';
 import { remove, copy, outputFile } from 'fs-extra';
-import { getConfig, ExtensionInfoGenerator, ExtensionCompiler } from '../config';
+import { getConfig, ExtensionInfoGenerator, ExtensionCompiler, CwexConfig } from '../config';
 import { getFiles, getResolvedTargetModule, getResolvedModule } from '../utils';
 
-export const buildProject = async ({ configPath = '' } = {}) => {
-  console.log(process.cwd());
-  const config = await getConfig(configPath);
-  console.log('Config:', config);
-
-  const outDir = resolve(config.rootDir, config.outDir);
-  console.log('Resolved output directory:', outDir);
-
-  console.log('Removing output directory..');
-  await remove(outDir);
-
-  console.log(`Building for ${config.targets.length} targets:`, config.targets);
-  for (const target of config.targets) {
-    const resolvedTargetModule = getResolvedTargetModule(target);
+const buildTarget = async (config: CwexConfig, target: string, { outDir = '', _require = require }) => {
+  const resolvedTargetModule = getResolvedTargetModule(target);
     console.log('resolved module:', resolvedTargetModule);
     if (!resolvedTargetModule) {
       console.log('No module found for target:', target);
-      continue;
+      return;
     }
-    const targetModule = require(resolvedTargetModule);
+    const targetModule = _require(resolvedTargetModule);
     const generateExtensionInfo: ExtensionInfoGenerator = targetModule.generateExtensionInfo;
 
     // TODO: Build target steps: beforeBuild:target, afterBuild:target, preCompile:target, postCompile:target
@@ -65,11 +53,9 @@ export const buildProject = async ({ configPath = '' } = {}) => {
     if (compileExtension) {
       if (config.beforeCompile) {
         const resolvedBeforeCompileModule = getResolvedModule(resolve(process.cwd(), config.beforeCompile));
-        console.log(resolvedBeforeCompileModule);
         if (resolvedBeforeCompileModule) {
-          console.log('Executing beforeCompile script..');
-          const beforeCompileModule = require(resolvedBeforeCompileModule);
-          console.log(beforeCompileModule);
+          console.log('Executing beforeCompile script..', resolvedBeforeCompileModule);
+          const beforeCompileModule = _require(resolvedBeforeCompileModule);
           await beforeCompileModule({
             config,
             extensionFilesDir: extensionOutDir,
@@ -85,5 +71,21 @@ export const buildProject = async ({ configPath = '' } = {}) => {
     }
   
     console.log('Build completed.');
+};
+
+export const buildProject = async ({ configPath = '', _require = require as any } = {}) => {
+  console.log('Current working directory:', process.cwd());
+  const config = await getConfig(configPath);
+  console.log('Config:', config);
+
+  const outDir = resolve(config.rootDir, config.outDir);
+  console.log('Resolved output directory:', outDir);
+
+  console.log('Removing output directory..');
+  await remove(outDir);
+
+  console.log(`Building for ${config.targets.length} targets:`, config.targets);
+  for (const target of config.targets) {
+    await buildTarget(config, target, { outDir, _require });
   }
 };
