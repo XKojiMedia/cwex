@@ -34,6 +34,28 @@ describe('buildTarget', () => {
     utils.getResolvedTargetModule.mockClear();
   });
 
+  it('should do nothing if target module is not resolved (found)', async () => {
+    utils.getResolvedTargetModule.mockImplementation((path: string) => ``);
+    const generateExtensionInfo = jest.fn();
+    const compileExtension = jest.fn();
+    const _req = jest.fn((path: string) => {
+      return {
+        compileExtension,
+        generateExtensionInfo,
+      };
+    });
+    await buildTarget({
+      targets: [ 'target1' ],
+      exclude: [ 'exclude\/regex' ],
+      beforeCompile: '/path/to/before-compile-script.js',
+      include: [],
+      rootDir: '',
+      outDir: '',
+    }, 'target1', { includedFiles: [ 'file3', 'file4' ], _require: _req });
+    expect(generateExtensionInfo).not.toHaveBeenCalled();
+    expect(compileExtension).not.toHaveBeenCalled();
+  });
+
   it('should run and compile extension', async () => {
     utils.getResolvedModule.mockImplementation((path: string) => `/path/to/module/${path}`);
     utils.getResolvedTargetModule.mockImplementation((path: string) => `/path/to/target/module/${path}`);
