@@ -30,6 +30,7 @@ export const buildTarget = async (config: CwexConfig, target: string, { outDir =
       onlyFiles: false,
       expandDirectories: false,
       absolute: true,
+      cwd: resolve(config.rootDir),
     });
     console.log('Included files:', includedFiles);
 
