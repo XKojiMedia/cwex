@@ -1,8 +1,9 @@
-import { buildProject } from './build';
+import { buildProject, buildTarget } from './build';
 import fsExtra from 'fs-extra';
 import path from 'path';
 const config = require('../config');
 const utils = require('../utils');
+const build = require('./build');
 
 jest.mock('fs-extra', () => {
   return {
@@ -23,22 +24,19 @@ utils.getFiles = jest.fn(() => [ 'file3', 'file4' ]);
 utils.getResolvedModule = jest.fn();
 utils.getResolvedTargetModule = jest.fn();
 
-describe('buildProject', () => {
+describe('buildTarget', () => {
   beforeEach(() => {
+    utils.getResolvedModule.mockImplementation((path: string) => `/path/to/module/${path}`);
+    utils.getResolvedTargetModule.mockImplementation((path: string) => `/path/to/target/module/${path}`);
   });
   afterEach(() => {
-    jest.clearAllMocks();
+    utils.getResolvedModule.mockClear();
+    utils.getResolvedTargetModule.mockClear();
   });
 
   it('should run and compile extension', async () => {
-    config.getConfig.mockImplementation(() => ({
-      targets: [ 'target1' ],
-      exclude: [ 'exclude\/regex' ],
-      beforeCompile: '/path/to/before-compile-script.js'
-    }));
     utils.getResolvedModule.mockImplementation((path: string) => `/path/to/module/${path}`);
     utils.getResolvedTargetModule.mockImplementation((path: string) => `/path/to/target/module/${path}`);
-    utils.getFiles.mockImplementation(() => Promise.resolve([ 'file1', 'file2' ]));
     const generateExtensionInfo = jest.fn(() => Promise.resolve({
       content: 'test content',
       fileName: 'test.json',
@@ -54,9 +52,54 @@ describe('buildProject', () => {
         generateExtensionInfo,
       };
     });
-    await buildProject({ _require: _req });
+
+    await buildTarget({
+      targets: [ 'target1' ],
+      exclude: [ 'exclude\/regex' ],
+      beforeCompile: '/path/to/before-compile-script.js',
+      include: [],
+      rootDir: '',
+      outDir: '',
+    }, 'target1', { includedFiles: [ 'file3', 'file4' ], _require: _req });
+
     expect(utils.getResolvedModule).toHaveBeenCalled();
+    expect(fsExtra.copy).toHaveBeenCalledWith('file3', '/target1-files/file3', expect.anything());
+    expect(fsExtra.copy).toHaveBeenCalledWith('file4', '/target1-files/file4', expect.anything());
     expect(fsExtra.outputFile).toHaveBeenCalled();
     expect(fsExtra.outputFile).toHaveBeenCalledWith(expect.stringMatching(/test.json$/), 'test content', 'utf8');
+  });
+});
+
+describe('buildProject', () => {
+  beforeEach(() => {
+  });
+  afterEach(() => {
+    config.getConfig.mockClear();
+    utils.getFiles.mockClear();
+  });
+
+  it('should run and compile extension', async () => {
+    config.getConfig.mockImplementation(() => ({
+      targets: [ 'target1' ],
+      exclude: [ 'exclude\/regex' ],
+      beforeCompile: '/path/to/before-compile-script.js',
+      outDir: 'test-out',
+      rootDir: 'root',
+    }));
+    const _buildTarget = build.buildTarget;
+    build.buildTarget = jest.fn();
+    utils.getFiles.mockImplementation(() => Promise.resolve([ 'file1', 'file2' ]));
+    await buildProject();
+    expect(build.buildTarget).toHaveBeenCalledWith({
+      targets: [ 'target1' ],
+      exclude: [ 'exclude\/regex' ],
+      beforeCompile: '/path/to/before-compile-script.js',
+      outDir: 'test-out',
+      rootDir: 'root',
+    }, 'target1', expect.objectContaining({
+      includedFiles: [ 'file1', 'file2' ],
+      outDir: 'root/test-out',
+    }));
+    build.buildTarget = _buildTarget;
   });
 });

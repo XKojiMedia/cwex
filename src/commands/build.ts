@@ -3,7 +3,7 @@ import { remove, copy, outputFile } from 'fs-extra';
 import { getConfig, ExtensionInfoGenerator, ExtensionCompiler, CwexConfig } from '../config';
 import { getFiles, getResolvedTargetModule, getResolvedModule } from '../utils';
 
-const buildTarget = async (config: CwexConfig, target: string, { outDir = '', _require = require }) => {
+export const buildTarget = async (config: CwexConfig, target: string, { outDir = '', includedFiles = [] as string[], _require = require as any }) => {
   const resolvedTargetModule = getResolvedTargetModule(target);
     console.log('resolved module:', resolvedTargetModule);
     if (!resolvedTargetModule) {
@@ -18,14 +18,6 @@ const buildTarget = async (config: CwexConfig, target: string, { outDir = '', _r
     // Compile templates with config data
     const extensionInfo = await generateExtensionInfo(config);
     console.log(`${target} extension info:`, extensionInfo);
-
-    const includedFiles = await getFiles(config.include, {
-      ignore: config.exclude,
-      onlyFiles: false,
-      expandDirectories: false,
-      absolute: true,
-    });
-    console.log('Included files:', includedFiles);
 
     const extensionOutDir = resolve(outDir, `${target}-files`);
     console.log('Resolved output directory:', outDir);
@@ -81,11 +73,19 @@ export const buildProject = async ({ configPath = '', _require = require as any 
   const outDir = resolve(config.rootDir, config.outDir);
   console.log('Resolved output directory:', outDir);
 
+  const includedFiles = await getFiles(config.include, {
+    ignore: config.exclude,
+    onlyFiles: false,
+    expandDirectories: false,
+    absolute: true,
+  });
+  console.log('Included files:', includedFiles);
+
   console.log('Removing output directory..');
   await remove(outDir);
 
   console.log(`Building for ${config.targets.length} targets:`, config.targets);
   for (const target of config.targets) {
-    await buildTarget(config, target, { outDir, _require });
+    await buildTarget(config, target, { outDir, _require, includedFiles });
   }
 };
