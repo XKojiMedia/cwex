@@ -29,6 +29,7 @@ interface ChromeExtension {
   version: string;
   short_name?: string;
   description?: string;
+  author?: string;
   icons?: ManifestIcons;
   browser_action?: ChromeExtensionBrowserAction;
   permissions?: string[];
@@ -80,6 +81,7 @@ const buildExtensionData = (config: CwexConfig): ChromeExtension | null => {
     version: config.manifestOptions.version,
     short_name: config.manifestOptions.short_name,
     description: config.manifestOptions.description,
+    author: config.manifestOptions.author,
     icons: config.manifestOptions.icons,
     browser_action: buildBrowserAction(config),
     permissions: config.manifestOptions.permissions,

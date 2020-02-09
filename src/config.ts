@@ -65,6 +65,13 @@ export interface ManifestOptions {
   name: string;
   short_name?: string;
   description?: string;
+
+  /**
+   * The extension's author, intended for display in the browser's user interface
+   * https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/author
+   */
+  author?: string;
+
   icons?: ManifestIcons;
   browser_action?: ManifestBrowserAction;
   page_action?: ManifestBrowserAction;

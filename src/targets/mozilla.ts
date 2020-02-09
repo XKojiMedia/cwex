@@ -14,6 +14,7 @@ interface MozillaAddon {
   name: string;
   short_name?: string;
   description?: string;
+  author?: string;
   version: string;
   icons?: ManifestIcons;
   browser_action?: ManifestBrowserAction;
@@ -56,6 +57,7 @@ const buildExtensionData = (config: CwexConfig): MozillaAddon | null => {
     name: config.manifestOptions.name,
     short_name: config.manifestOptions.short_name,
     description: config.manifestOptions.description,
+    author: config.manifestOptions.author,
     version: config.manifestOptions.version,
     icons: config.manifestOptions.icons,
     browser_action: buildBrowserAction(config),
