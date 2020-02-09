@@ -18,16 +18,16 @@ interface ChromeExtensionOptionsUi {
 interface ChromeExtension {
   manifest_version: 2;
   name: string;
-  short_name: string;
-  description: string;
+  short_name?: string;
+  description?: string;
   version: string;
-  icons: ManifestIcons;
-  browser_action: ChromeExtensionBrowserAction;
-  permissions: string[];
-  content_security_policy: string;
-  background: ChromeExtensionBackground;
+  icons?: ManifestIcons;
+  browser_action?: ChromeExtensionBrowserAction;
+  permissions?: string[];
+  content_security_policy?: string;
+  background?: ChromeExtensionBackground;
   options_ui?: ChromeExtensionOptionsUi;
-  offline_enabled: boolean;
+  offline_enabled?: boolean;
 }
 
 const buildBrowserAction = (config: CwexConfig): ChromeExtensionBrowserAction => {

@@ -15,16 +15,16 @@ interface MozillaAddonOptionsUi {
 interface MozillaAddon {
   manifest_version: 2;
   name: string;
-  short_name: string;
-  description: string;
+  short_name?: string;
+  description?: string;
   version: string;
-  icons: ManifestIcons;
-  browser_action: MozillaAddonBrowserAction;
-  permissions: string[];
-  content_security_policy: string;
-  background: MozillaAddonBackground;
+  icons?: ManifestIcons;
+  browser_action?: MozillaAddonBrowserAction;
+  permissions?: string[];
+  content_security_policy?: string;
+  background?: MozillaAddonBackground;
   options_ui?: MozillaAddonOptionsUi;
-  offline_enabled: boolean;
+  offline_enabled?: boolean;
 }
 
 const buildBrowserAction = (config: CwexConfig): MozillaAddonBrowserAction => {

@@ -35,18 +35,18 @@ interface ManifestSettingsOptions {
 }
 
 export interface ManifestOptions {
-  name: string;
-  shortName: string;
-  description: string;
   version: string;
-  icons: ManifestIcons;
-  browserAction: ManifestBrowserAction;
-  pageAction: ManifestBrowserAction;
-  permissions: string[];
-  contentSecurityPolicy: string;
-  backgroundOptions: ManifestBackgroundOptions;
-  settingsOptions: ManifestSettingsOptions;
-  offlineEnabled: boolean;
+  name: string;
+  shortName?: string;
+  description?: string;
+  icons?: ManifestIcons;
+  browserAction?: ManifestBrowserAction;
+  pageAction?: ManifestBrowserAction;
+  permissions?: string[];
+  contentSecurityPolicy?: string;
+  backgroundOptions?: ManifestBackgroundOptions;
+  settingsOptions?: ManifestSettingsOptions;
+  offlineEnabled?: boolean;
 }
 
 export interface CwexConfig {
