@@ -3,7 +3,7 @@ import { remove, copy, outputFile } from 'fs-extra';
 import { getConfig, ExtensionInfoGenerator, ExtensionCompiler, CwexConfig } from '../config';
 import { getFiles, getResolvedTargetModule, getResolvedModule } from '../utils';
 
-export const buildTarget = async (config: CwexConfig, target: string, { outDir = '', includedFiles = [] as string[], _require = require as any }) => {
+export const buildTarget = async (config: CwexConfig, target: string, { outDir = '', _require = require as any }) => {
   const resolvedTargetModule = getResolvedTargetModule(target);
     console.log('resolved module:', resolvedTargetModule);
     if (!resolvedTargetModule) {
@@ -24,6 +24,14 @@ export const buildTarget = async (config: CwexConfig, target: string, { outDir =
 
     console.log('Removing output directory..');
     await remove(extensionOutDir);
+
+    const includedFiles = await getFiles(config.include, {
+      ignore: config.exclude,
+      onlyFiles: false,
+      expandDirectories: false,
+      absolute: true,
+    });
+    console.log('Included files:', includedFiles);
 
     console.log('Copying included files to output directory..');
     for (const file of includedFiles) {
@@ -73,19 +81,16 @@ export const buildProject = async ({ configPath = '', _require = require as any 
   const outDir = resolve(config.rootDir, config.outDir);
   console.log('Resolved output directory:', outDir);
 
-  const includedFiles = await getFiles(config.include, {
-    ignore: config.exclude,
-    onlyFiles: false,
-    expandDirectories: false,
-    absolute: true,
-  });
-  console.log('Included files:', includedFiles);
-
   console.log('Removing output directory..');
   await remove(outDir);
 
   console.log(`Building for ${config.targets.length} targets:`, config.targets);
   for (const target of config.targets) {
-    await buildTarget(config, target, { outDir, _require, includedFiles });
+    let targetConfig = config;
+    if (config.targetOptions && config.targetOptions[target]) {
+      targetConfig = { ...config, ...config.targetOptions[target] };
+    }
+
+    await buildTarget(targetConfig, target, { outDir, _require });
   }
 };

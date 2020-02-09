@@ -20,7 +20,7 @@ jest.mock('path', () => {
   }
 });
 config.getConfig = jest.fn();
-utils.getFiles = jest.fn(() => [ 'file3', 'file4' ]);
+utils.getFiles = jest.fn();
 utils.getResolvedModule = jest.fn();
 utils.getResolvedTargetModule = jest.fn();
 
@@ -32,6 +32,7 @@ describe('buildTarget', () => {
   afterEach(() => {
     utils.getResolvedModule.mockClear();
     utils.getResolvedTargetModule.mockClear();
+    utils.getFiles.mockClear();
   });
 
   it('should do nothing if target module is not resolved (found)', async () => {
@@ -48,10 +49,10 @@ describe('buildTarget', () => {
       targets: [ 'target1' ],
       exclude: [ 'exclude\/regex' ],
       beforeCompile: '/path/to/before-compile-script.js',
-      include: [],
+      include: [ 'file3', 'file4' ],
       rootDir: '',
       outDir: '',
-    }, 'target1', { includedFiles: [ 'file3', 'file4' ], _require: _req });
+    }, 'target1', { _require: _req });
     expect(generateExtensionInfo).not.toHaveBeenCalled();
     expect(compileExtension).not.toHaveBeenCalled();
   });
@@ -59,6 +60,7 @@ describe('buildTarget', () => {
   it('should run and compile extension', async () => {
     utils.getResolvedModule.mockImplementation((path: string) => `/path/to/module/${path}`);
     utils.getResolvedTargetModule.mockImplementation((path: string) => `/path/to/target/module/${path}`);
+    utils.getFiles.mockImplementation(() => Promise.resolve([ 'file3', 'file4' ]));
     const generateExtensionInfo = jest.fn(() => Promise.resolve({
       content: 'test content',
       fileName: 'test.json',
@@ -79,10 +81,10 @@ describe('buildTarget', () => {
       targets: [ 'target1' ],
       exclude: [ 'exclude\/regex' ],
       beforeCompile: '/path/to/before-compile-script.js',
-      include: [],
+      include: [ 'file3', 'file4' ],
       rootDir: '',
       outDir: '',
-    }, 'target1', { includedFiles: [ 'file3', 'file4' ], _require: _req });
+    }, 'target1', { _require: _req });
 
     expect(utils.getResolvedModule).toHaveBeenCalled();
     expect(fsExtra.copy).toHaveBeenCalledWith('file3', '/target1-files/file3', expect.anything());
@@ -93,11 +95,14 @@ describe('buildTarget', () => {
 });
 
 describe('buildProject', () => {
+  let _buildTarget: any;
   beforeEach(() => {
+    _buildTarget = build.buildTarget;
+    build.buildTarget = jest.fn();
   });
   afterEach(() => {
+    build.buildTarget = _buildTarget;
     config.getConfig.mockClear();
-    utils.getFiles.mockClear();
   });
 
   it('should run and compile extension', async () => {
@@ -108,9 +113,6 @@ describe('buildProject', () => {
       outDir: 'test-out',
       rootDir: 'root',
     }));
-    const _buildTarget = build.buildTarget;
-    build.buildTarget = jest.fn();
-    utils.getFiles.mockImplementation(() => Promise.resolve([ 'file1', 'file2' ]));
     await buildProject();
     expect(build.buildTarget).toHaveBeenCalledWith({
       targets: [ 'target1' ],
@@ -119,9 +121,35 @@ describe('buildProject', () => {
       outDir: 'test-out',
       rootDir: 'root',
     }, 'target1', expect.objectContaining({
-      includedFiles: [ 'file1', 'file2' ],
       outDir: 'root/test-out',
     }));
-    build.buildTarget = _buildTarget;
+  });
+
+  it('should merge target-specific config when passing config to target plugin', async () => {
+    config.getConfig.mockImplementation(() => ({
+      targets: [ 'target1' ],
+      exclude: [ 'exclude\/regex' ],
+      beforeCompile: '/path/to/before-compile-script.js',
+      outDir: 'test-out',
+      rootDir: 'root',
+      targetOptions: {
+        target1: {
+          include: [ 'target1-file1', 'target1-file2' ],
+          exclude: [ 'target1.exclude.pattern' ],
+        }
+      }
+    }));
+    // utils.getFiles.mockImplementation(() => Promise.resolve([ 'file1', 'file2' ]));
+    await buildProject();
+    expect(build.buildTarget).toHaveBeenCalledWith(expect.objectContaining({
+      targets: [ 'target1' ],
+      include: [ 'target1-file1', 'target1-file2' ],
+      exclude: [ 'target1.exclude.pattern' ],
+      beforeCompile: '/path/to/before-compile-script.js',
+      outDir: 'test-out',
+      rootDir: 'root',
+    }), 'target1', expect.objectContaining({
+      outDir: 'root/test-out',
+    }));
   });
 });

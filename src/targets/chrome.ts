@@ -18,9 +18,9 @@ interface ChromeExtensionOptionsUi {
 interface ChromeExtension {
   manifest_version: 2;
   name: string;
+  version: string;
   short_name?: string;
   description?: string;
-  version: string;
   icons?: ManifestIcons;
   browser_action?: ChromeExtensionBrowserAction;
   permissions?: string[];
@@ -57,9 +57,9 @@ const buildExtensionData = (config: CwexConfig): ChromeExtension | null => {
   return {
     manifest_version: 2,
     name: config.manifestOptions.name,
+    version: config.manifestOptions.version,
     short_name: config.manifestOptions.shortName,
     description: config.manifestOptions.description,
-    version: config.manifestOptions.version,
     icons: config.manifestOptions.icons,
     browser_action: buildBrowserAction(config),
     permissions: config.manifestOptions.permissions,

@@ -70,6 +70,9 @@ export interface CwexConfig {
 
   // Manifest file options
   manifestOptions?: ManifestOptions;
+
+  // Config options specific to a target e.g. chrome: { include, exclude, etc }
+  targetOptions?: { [key: string]: CwexConfig };
 }
 
 export interface ExtensionInfo {
