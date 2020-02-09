@@ -1,4 +1,4 @@
-import { CwexConfig, ManifestIcons, ManifestBrowserAction, ExtensionInfo, ExtensionCompiler } from '../config';
+import { CwexConfig, ManifestIcons, ManifestBrowserAction, ExtensionInfo, ExtensionCompiler, ManifestBrowserSpecificSettings } from '../config';
 const webExt = require('web-ext').default;
 
 interface MozillaAddonBackground {
@@ -22,6 +22,7 @@ interface MozillaAddon {
   background?: MozillaAddonBackground;
   options_ui?: MozillaAddonOptionsUi;
   offline_enabled?: boolean;
+  browser_specific_settings?: ManifestBrowserSpecificSettings;
 }
 
 const buildBrowserAction = (config: CwexConfig): ManifestBrowserAction => {
@@ -63,6 +64,7 @@ const buildExtensionData = (config: CwexConfig): MozillaAddon | null => {
     background: config.manifestOptions.background,
     options_ui: buildOptionsUi(config),
     offline_enabled: config.manifestOptions.offline_enabled,
+    browser_specific_settings: config.manifestOptions.browser_specific_settings,
   };
 };
 

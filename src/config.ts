@@ -47,6 +47,15 @@ export interface ManifestContentScriptOptions {
   all_frames?: boolean;
 }
 
+export interface ManifestBrowserSpecificSettings {
+  gecko?: {
+    id?: string;
+    strict_min_version?: string;
+    strict_max_version?: string;
+    update_url?: string;
+  };
+}
+
 export interface IDictionary<v = any> {
   [key: string]: v;
 }
@@ -153,6 +162,12 @@ export interface ManifestOptions {
    * https://developer.chrome.com/extensions/manifest/web_accessible_resources
    */
   web_accessible_resources?: IDictionary;
+
+  /**
+   * contains keys that are specific to a particular host application
+   * https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/browser_specific_settings
+   */
+  browser_specific_settings?: ManifestBrowserSpecificSettings;
 }
 
 export interface CwexConfig {
