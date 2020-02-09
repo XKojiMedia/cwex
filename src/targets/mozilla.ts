@@ -68,8 +68,9 @@ const buildExtensionData = (config: CwexConfig): MozillaAddon | null => {
 };
 
 export const generateExtensionInfo = async(config: CwexConfig): Promise<ExtensionInfo> => {
+  const extensionData = buildExtensionData(config);
   return {
-    content: JSON.stringify(buildExtensionData(config), null, 2),
+    content: extensionData ? JSON.stringify(extensionData, null, 2): '',
     fileName: 'manifest.json',
     fileType: 'json',
   };
