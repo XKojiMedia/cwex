@@ -1,6 +1,14 @@
 import fs from 'fs';
 import path from 'path';
-import { CwexConfig, ManifestIcons, ExtensionInfo, ExtensionCompilerOption, ExtensionCompiler } from '../config';
+import {
+  CwexConfig,
+  ManifestIcons,
+  ExtensionInfo,
+  ExtensionCompilerOption,
+  ExtensionCompiler,
+  IDictionary,
+  ManifestContentScriptOptions,
+} from '../config';
 import archiver from 'archiver';
 import { ensureFile } from 'fs-extra';
 
@@ -28,6 +36,18 @@ interface ChromeExtension {
   background?: ChromeExtensionBackground;
   options_ui?: ChromeExtensionOptionsUi;
   offline_enabled?: boolean;
+  chrome_settings_overrides?: IDictionary;
+  chrome_ui_overrides?: IDictionary;
+  chrome_url_overrides?: IDictionary;
+  commands?: IDictionary;
+  content_scripts?: IDictionary<ManifestContentScriptOptions>;
+  devtools_page?: string;
+  homepage_url?: string;
+  incognito?: 'spanning' | 'split' | 'not_allowed';
+  minimum_chrome_version?: string;
+  omnibox?: IDictionary;
+  storage?: IDictionary;
+  web_accessible_resources?: IDictionary;
 }
 
 const buildBrowserAction = (config: CwexConfig): ChromeExtensionBrowserAction => {
@@ -67,6 +87,18 @@ const buildExtensionData = (config: CwexConfig): ChromeExtension | null => {
     background: config.manifestOptions.background,
     options_ui: buildOptionsUi(config),
     offline_enabled: config.manifestOptions.offline_enabled,
+    chrome_settings_overrides: config.manifestOptions.chrome_settings_overrides,
+    chrome_ui_overrides: config.manifestOptions.chrome_ui_overrides,
+    chrome_url_overrides: config.manifestOptions.chrome_url_overrides,
+    commands: config.manifestOptions.commands,
+    content_scripts: config.manifestOptions.content_scripts,
+    devtools_page: config.manifestOptions.devtools_page,
+    homepage_url: config.manifestOptions.homepage_url,
+    incognito: config.manifestOptions.incognito,
+    minimum_chrome_version: config.manifestOptions.minimum_chrome_version,
+    omnibox: config.manifestOptions.omnibox,
+    storage: config.manifestOptions.storage,
+    web_accessible_resources: config.manifestOptions.web_accessible_resources,
   };
 };
 
