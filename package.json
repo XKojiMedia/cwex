@@ -6,8 +6,17 @@
     "cwex": "dist/cli.js"
   },
   "main": "dist/index.js",
+  "keywords": [
+    "extension",
+    "browser extension",
+    "web manifest"
+  ],
   "author": "Samuel Imolorhe <samuelimolo4real@gmail.com> (https://sirmuel.design/)",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/XKojiMedia/cwex.git"
+  },
   "scripts": {
     "build": "tsc",
     "dev": "tsc -w"
