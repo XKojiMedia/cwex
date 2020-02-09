@@ -91,7 +91,7 @@ export type ExtensionCompiler = (opts: ExtensionCompilerOption) => Promise<boole
 export const defaultConfig: CwexConfig = {
   include: [],
   exclude: [],
-  targets: [...Object.values(EXTENSION_TARGET), 'x'],
+  targets: [...Object.values(EXTENSION_TARGET)],
   rootDir: './',
   outDir: 'out',
 };

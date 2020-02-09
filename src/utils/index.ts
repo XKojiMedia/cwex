@@ -4,14 +4,14 @@ export const getFiles = (patterns: string[], opts: GlobbyOptions = {}) => {
   return globby(patterns, opts);
 };
 
-export const getResolvedModule = (modulePath: string) => {
+export const getResolvedModule = (modulePath: string, { resolver = require.resolve } = {}) => {
   try {
-    return require.resolve(modulePath);
+    return resolver(modulePath);
   } catch (err) {
     return '';
   }
 };
 
-export const getResolvedTargetModule = (target: string) => {
-  return getResolvedModule(`../targets/${target}`);
+export const getResolvedTargetModule = (target: string, { resolver = require.resolve } = {}) => {
+  return getResolvedModule(`../targets/${target}`, { resolver });
 };
