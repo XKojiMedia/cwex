@@ -19,10 +19,10 @@ interface ManifestIconMap {
 }
 export type ManifestIcons = ManifestIconMap | string;
 
-interface ManifestBrowserAction {
-  defaultIcon: ManifestIcons;
-  defaultTitle: string;
-  defaultPopup: string;
+export interface ManifestBrowserAction {
+  default_icon?: ManifestIcons;
+  default_title?: string;
+  default_popup?: string;
 }
 
 interface ManifestBackgroundOptions {
@@ -31,22 +31,22 @@ interface ManifestBackgroundOptions {
 
 interface ManifestSettingsOptions {
   page: string;
-  openInTab: boolean;
+  open_in_tab: boolean;
 }
 
 export interface ManifestOptions {
   version: string;
   name: string;
-  shortName?: string;
+  short_name?: string;
   description?: string;
   icons?: ManifestIcons;
-  browserAction?: ManifestBrowserAction;
-  pageAction?: ManifestBrowserAction;
+  browser_action?: ManifestBrowserAction;
+  page_action?: ManifestBrowserAction;
   permissions?: string[];
-  contentSecurityPolicy?: string;
-  backgroundOptions?: ManifestBackgroundOptions;
-  settingsOptions?: ManifestSettingsOptions;
-  offlineEnabled?: boolean;
+  content_security_policy?: string;
+  background?: ManifestBackgroundOptions;
+  options_ui?: ManifestSettingsOptions;
+  offline_enabled?: boolean;
 }
 
 export interface CwexConfig {

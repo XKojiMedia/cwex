@@ -7,6 +7,8 @@ Object {
   },
   "browser_action": Object {
     "default_icon": "",
+    "default_popup": "",
+    "default_title": "",
   },
   "content_security_policy": "",
   "description": "Test extension description",

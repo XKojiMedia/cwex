@@ -1,9 +1,6 @@
-import { CwexConfig, ManifestIcons, ExtensionInfo, ExtensionCompiler } from '../config';
+import { CwexConfig, ManifestIcons, ManifestBrowserAction, ExtensionInfo, ExtensionCompiler } from '../config';
 const webExt = require('web-ext').default;
 
-interface MozillaAddonBrowserAction {
-  default_icon?: ManifestIcons;
-}
 interface MozillaAddonBackground {
   scripts: string[];
 }
@@ -19,7 +16,7 @@ interface MozillaAddon {
   description?: string;
   version: string;
   icons?: ManifestIcons;
-  browser_action?: MozillaAddonBrowserAction;
+  browser_action?: ManifestBrowserAction;
   permissions?: string[];
   content_security_policy?: string;
   background?: MozillaAddonBackground;
@@ -27,20 +24,22 @@ interface MozillaAddon {
   offline_enabled?: boolean;
 }
 
-const buildBrowserAction = (config: CwexConfig): MozillaAddonBrowserAction => {
-  if (config.manifestOptions?.browserAction) {
+const buildBrowserAction = (config: CwexConfig): ManifestBrowserAction => {
+  if (config.manifestOptions?.browser_action) {
     return {
-      default_icon: config.manifestOptions.browserAction.defaultIcon,
+      default_icon: config.manifestOptions.browser_action.default_icon,
+      default_popup: config.manifestOptions.browser_action.default_popup,
+      default_title: config.manifestOptions.browser_action.default_title,
     };
   }
   return {};
 };
 
 const buildOptionsUi = (config: CwexConfig): MozillaAddonOptionsUi | undefined => {
-  if (config.manifestOptions?.settingsOptions) {
+  if (config.manifestOptions?.options_ui) {
     return {
-      page: config.manifestOptions.settingsOptions.page,
-      open_in_tab: config.manifestOptions.settingsOptions.openInTab,
+      page: config.manifestOptions.options_ui.page,
+      open_in_tab: config.manifestOptions.options_ui.open_in_tab,
     };
   }
   return undefined;
@@ -54,16 +53,16 @@ const buildExtensionData = (config: CwexConfig): MozillaAddon | null => {
   return {
     manifest_version: 2,
     name: config.manifestOptions.name,
-    short_name: config.manifestOptions.shortName,
+    short_name: config.manifestOptions.short_name,
     description: config.manifestOptions.description,
     version: config.manifestOptions.version,
     icons: config.manifestOptions.icons,
     browser_action: buildBrowserAction(config),
     permissions: config.manifestOptions.permissions,
-    content_security_policy: config.manifestOptions.contentSecurityPolicy,
-    background: config.manifestOptions.backgroundOptions,
+    content_security_policy: config.manifestOptions.content_security_policy,
+    background: config.manifestOptions.background,
     options_ui: buildOptionsUi(config),
-    offline_enabled: config.manifestOptions.offlineEnabled,
+    offline_enabled: config.manifestOptions.offline_enabled,
   };
 };
 

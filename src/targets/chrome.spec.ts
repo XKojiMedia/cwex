@@ -61,29 +61,29 @@ describe('chrome target', () => {
         manifestOptions: {
           name: 'Test extension',
           version: '0.0.1',
-          backgroundOptions: {
+          background: {
             scripts: []
           },
-          browserAction: {
-            defaultIcon: '',
-            defaultTitle: '',
-            defaultPopup: '',
+          browser_action: {
+            default_icon: '',
+            default_title: '',
+            default_popup: '',
           },
-          contentSecurityPolicy: '',
+          content_security_policy: '',
           description: 'Test extension description',
           icons: '',
-          offlineEnabled: false,
-          pageAction: {
-            defaultIcon: '',
-            defaultTitle: '',
-            defaultPopup: '',
+          offline_enabled: false,
+          page_action: {
+            default_icon: '',
+            default_title: '',
+            default_popup: '',
           },
           permissions: [],
-          settingsOptions: {
+          options_ui: {
             page: '',
-            openInTab: false,
+            open_in_tab: false,
           },
-          shortName: 'Test'
+          short_name: 'Test'
         }
       });
       expect(extensionInfo.content).toBeTruthy();

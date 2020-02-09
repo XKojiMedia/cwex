@@ -31,19 +31,19 @@ interface ChromeExtension {
 }
 
 const buildBrowserAction = (config: CwexConfig): ChromeExtensionBrowserAction => {
-  if (config.manifestOptions?.browserAction) {
+  if (config.manifestOptions?.browser_action) {
     return {
-      default_icon: config.manifestOptions.browserAction.defaultIcon,
+      default_icon: config.manifestOptions.browser_action.default_icon,
     };
   }
   return {};
 };
 
 const buildOptionsUi = (config: CwexConfig): ChromeExtensionOptionsUi | undefined => {
-  if (config.manifestOptions?.settingsOptions) {
+  if (config.manifestOptions?.options_ui) {
     return {
-      page: config.manifestOptions.settingsOptions.page,
-      open_in_tab: config.manifestOptions.settingsOptions.openInTab,
+      page: config.manifestOptions.options_ui.page,
+      open_in_tab: config.manifestOptions.options_ui.open_in_tab,
     };
   }
   return undefined;
@@ -58,15 +58,15 @@ const buildExtensionData = (config: CwexConfig): ChromeExtension | null => {
     manifest_version: 2,
     name: config.manifestOptions.name,
     version: config.manifestOptions.version,
-    short_name: config.manifestOptions.shortName,
+    short_name: config.manifestOptions.short_name,
     description: config.manifestOptions.description,
     icons: config.manifestOptions.icons,
     browser_action: buildBrowserAction(config),
     permissions: config.manifestOptions.permissions,
-    content_security_policy: config.manifestOptions.contentSecurityPolicy,
-    background: config.manifestOptions.backgroundOptions,
+    content_security_policy: config.manifestOptions.content_security_policy,
+    background: config.manifestOptions.background,
     options_ui: buildOptionsUi(config),
-    offline_enabled: config.manifestOptions.offlineEnabled,
+    offline_enabled: config.manifestOptions.offline_enabled,
   };
 };
 
@@ -88,7 +88,7 @@ export const compileExtension: ExtensionCompiler = async(opts: ExtensionCompiler
 
     // zip extension files
     const archive = archiver('zip');
-     
+
     // listen for all archive data to be written
     // 'close' event is fired only when a file descriptor is involved
     output.on('close', () => {
@@ -115,18 +115,18 @@ export const compileExtension: ExtensionCompiler = async(opts: ExtensionCompiler
         return reject(err);
       }
     });
-    
+
     // good practice to catch this error explicitly
     archive.on('error', (err) => {
       return reject(err);
     });
-    
+
     // pipe archive data to the file
     archive.pipe(output);
   
     // append files from a sub-directory, putting its contents at the root of archive
     archive.directory(opts.extensionFilesDir, false);
-  
+
     // finalize the archive (ie we are done appending files but streams have to finish yet)
     // 'close', 'end' or 'finish' may be fired right after calling this method so register to them beforehand
     archive.finalize();
