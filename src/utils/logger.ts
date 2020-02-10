@@ -1,5 +1,6 @@
 import debug from 'debug';
 
+export const setLogging = (enable: boolean) => enable ? enableLogging() : disableLogging();
 export const enableLogging = () => debug.enable('cwex');
 export const disableLogging = () => debug.disable();
 

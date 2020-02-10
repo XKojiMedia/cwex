@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { Command } from 'commander';
-import { enableLogging } from './utils/logger';
+import { setLogging } from './utils/logger';
 
 import { buildProject } from './index';
 
@@ -12,12 +12,14 @@ program
   .option('-c, --config <config path>', 'specify the config file')
   .option('--debug', 'show debugging information')
   .action((cmd) => {
-    if (cmd.debug) {
-      enableLogging();
-    }
-    buildProject(cmd.config);
+    setLogging(cmd.debug);
+    return buildProject({
+      configPath: cmd.config
+    });
   });
 program.parse(process.argv);
+
+export default program;
 
 // TODO: scaffold project
 

@@ -1,4 +1,5 @@
 import { readFileSync } from 'fs';
+import path from 'path';
 import findUp from 'find-up';
 import yaml from 'yaml';
 import log from './utils/logger';

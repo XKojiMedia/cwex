@@ -2,9 +2,8 @@ import { resolve, basename } from 'path';
 import { remove, copy, outputFile } from 'fs-extra';
 import { getConfig, ExtensionInfoGenerator, ExtensionCompiler, CwexConfig } from '../config';
 import { getFiles, getResolvedTargetModule, getResolvedModule } from '../utils';
-import log, { enableLogging } from '../utils/logger';
+import log from '../utils/logger';
 
-enableLogging();
 export const buildTarget = async (config: CwexConfig, target: string, { outDir = '', _require = require as any }) => {
   const resolvedTargetModule = getResolvedTargetModule(target);
     log('resolved module:', resolvedTargetModule);

@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`buildProject builds successfully 1`] = `
+exports[`build command builds successfully 1`] = `
 "{
   \\"manifest_version\\": 2,
   \\"name\\": \\"Test extension\\",
@@ -9,7 +9,7 @@ exports[`buildProject builds successfully 1`] = `
 }"
 `;
 
-exports[`buildProject builds successfully 2`] = `
+exports[`build command builds successfully 2`] = `
 "{
   \\"manifest_version\\": 2,
   \\"name\\": \\"Test extension\\",
