@@ -4,7 +4,7 @@ module.exports = {
   rootDir: 'src',
   collectCoverage: true,
   collectCoverageFrom: [
-    'src/**/*.{ts,tsx}',
+    '**/*.{ts,tsx}',
     '!**/node_modules/**',
   ],
   coverageDirectory: '.coverage',
