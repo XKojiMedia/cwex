@@ -1,9 +1,9 @@
-const path = require('path');
-const fs = require('fs-extra');
-const exec = require('child_process').exec;
+import path from 'path';
+import fs from 'fs-extra';
+import { exec } from 'child_process';
 jest.unmock('web-ext');
 
-const cli = (args, cwd = process.cwd())=> {
+const cli = (args: string[], cwd = process.cwd()): Promise<any> => {
   return new Promise(resolve => { 
     const command = `yarn ts-node ${path.resolve('./src/cli.ts')} ${args.join(' ')}`;
 
@@ -19,8 +19,9 @@ const cli = (args, cwd = process.cwd())=> {
 
 describe('build command', () => {
   it('builds successfully', async () => {
+    jest.setTimeout(20000);
     await fs.remove(path.resolve(__dirname, './e2e-test-out'));
-    const result = await cli([ 'build', '--config', './e2e/fixtures/cwex.yml' ]);
+    const result = await cli([ 'build', '--config', './src/e2e/fixtures/cwex.yml' ]);
     expect(result.code).toBe(0);
     expect(await fs.pathExists(path.resolve(__dirname, './e2e-test-out'))).toBeTruthy();
     expect(await fs.pathExists(path.resolve(__dirname, './e2e-test-out', 'chrome-files'))).toBeTruthy();

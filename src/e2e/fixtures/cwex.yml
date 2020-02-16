@@ -1,5 +1,5 @@
 outDir: e2e-test-out
-rootDir: ./e2e
+rootDir: ./src/e2e
 include:
   - fixtures/random_includes/*
 manifestOptions:
