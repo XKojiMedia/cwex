@@ -1,9 +1,9 @@
-import path from 'path';
-import fs from 'fs-extra';
-import { exec } from 'child_process';
+const path = require('path');
+const fs = require('fs-extra');
+const exec = require('child_process').exec;
 jest.unmock('web-ext');
 
-const cli = (args: string[], cwd = process.cwd()): Promise<any> => {
+const cli = (args, cwd = process.cwd())=> {
   return new Promise(resolve => { 
     const command = `yarn ts-node ${path.resolve('./src/cli.ts')} ${args.join(' ')}`;
 
