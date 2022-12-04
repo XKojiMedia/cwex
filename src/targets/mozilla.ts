@@ -6,7 +6,7 @@ import {
   ExtensionCompiler,
   ManifestBrowserSpecificSettings,
 } from "../config";
-const webExt = require("web-ext").default;
+const webExt = require("web-ext");
 
 interface MozillaAddonBackground {
   scripts: string[];

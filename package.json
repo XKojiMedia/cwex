@@ -31,7 +31,7 @@
     "find-up": "^4.1.0",
     "fs-extra": "^8.1.0",
     "globby": "^11.0.0",
-    "web-ext": "^4.0.0",
+    "web-ext": "^6.8.0",
     "yaml": "^1.7.2"
   },
   "devDependencies": {
