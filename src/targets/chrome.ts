@@ -1,5 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+import fs from "fs";
+import path from "path";
 import {
   CwexConfig,
   ManifestIcons,
@@ -8,10 +8,10 @@ import {
   ExtensionCompiler,
   IDictionary,
   ManifestContentScriptOptions,
-} from '../config';
-import archiver from 'archiver';
-import { ensureFile } from 'fs-extra';
-import log from '../utils/logger';
+} from "../config";
+import archiver from "archiver";
+import { ensureFile } from "fs-extra";
+import log from "../utils/logger";
 
 interface ChromeExtensionBrowserAction {
   default_icon?: ManifestIcons;
@@ -45,14 +45,16 @@ interface ChromeExtension {
   content_scripts?: IDictionary<ManifestContentScriptOptions>;
   devtools_page?: string;
   homepage_url?: string;
-  incognito?: 'spanning' | 'split' | 'not_allowed';
+  incognito?: "spanning" | "split" | "not_allowed";
   minimum_chrome_version?: string;
   omnibox?: IDictionary;
   storage?: IDictionary;
   web_accessible_resources?: IDictionary;
 }
 
-const buildBrowserAction = (config: CwexConfig): ChromeExtensionBrowserAction => {
+const buildBrowserAction = (
+  config: CwexConfig
+): ChromeExtensionBrowserAction => {
   if (config.manifestOptions?.browser_action) {
     return {
       default_icon: config.manifestOptions.browser_action.default_icon,
@@ -61,7 +63,9 @@ const buildBrowserAction = (config: CwexConfig): ChromeExtensionBrowserAction =>
   return {};
 };
 
-const buildOptionsUi = (config: CwexConfig): ChromeExtensionOptionsUi | undefined => {
+const buildOptionsUi = (
+  config: CwexConfig
+): ChromeExtensionOptionsUi | undefined => {
   if (config.manifestOptions?.options_ui) {
     return {
       page: config.manifestOptions.options_ui.page,
@@ -105,28 +109,34 @@ const buildExtensionData = (config: CwexConfig): ChromeExtension | null => {
   };
 };
 
-export const generateExtensionInfo = async(config: CwexConfig): Promise<ExtensionInfo> => {
+export const generateExtensionInfo = async (
+  config: CwexConfig
+): Promise<ExtensionInfo> => {
   const extensionData = buildExtensionData(config);
   return {
-    content: extensionData ? JSON.stringify(extensionData, null, 2): '',
-    fileName: 'manifest.json',
-    fileType: 'json',
+    content: extensionData ? JSON.stringify(extensionData, null, 2) : "",
+    fileName: "manifest.json",
+    fileType: "json",
   };
 };
 
-export const compileExtension: ExtensionCompiler = async(opts: ExtensionCompilerOption) => {
-  const outputPath = path.resolve(opts.extensionBuildOutputDir, 'chrome.zip');
+export const compileExtension: ExtensionCompiler = async (
+  opts: ExtensionCompilerOption
+) => {
+  const outputPath = path.resolve(
+    opts.extensionBuildOutputDir,
+    opts.config.outFile ?? "chrome.zip"
+  );
   await ensureFile(outputPath);
   const output = fs.createWriteStream(outputPath);
 
   return new Promise((resolve, reject) => {
-
     // zip extension files
-    const archive = archiver('zip');
+    const archive = archiver("zip");
 
     // listen for all archive data to be written
     // 'close' event is fired only when a file descriptor is involved
-    output.on('close', () => {
+    output.on("close", () => {
       // log(archive.pointer() + ' total bytes');
       // log('archiver has been finalized and the output file descriptor has closed.');
       return resolve(true);
@@ -135,14 +145,14 @@ export const compileExtension: ExtensionCompiler = async(opts: ExtensionCompiler
     // This event is fired when the data source is drained no matter what was the data source.
     // It is not part of this library but rather from the NodeJS Stream API.
     // @see: https://nodejs.org/api/stream.html#stream_event_end
-    output.on('end', () => {
-      log('Data has been drained');
+    output.on("end", () => {
+      log("Data has been drained");
       return resolve(true);
     });
 
     // good practice to catch warnings (ie stat failures and other non-blocking errors)
-    archive.on('warning', (err) => {
-      if (err.code === 'ENOENT') {
+    archive.on("warning", (err) => {
+      if (err.code === "ENOENT") {
         // log warning
         log(err);
       } else {
@@ -152,13 +162,13 @@ export const compileExtension: ExtensionCompiler = async(opts: ExtensionCompiler
     });
 
     // good practice to catch this error explicitly
-    archive.on('error', (err) => {
+    archive.on("error", (err) => {
       return reject(err);
     });
 
     // pipe archive data to the file
     archive.pipe(output);
-  
+
     // append files from a sub-directory, putting its contents at the root of archive
     archive.directory(opts.extensionFilesDir, false);
 

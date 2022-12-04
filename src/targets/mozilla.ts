@@ -1,5 +1,12 @@
-import { CwexConfig, ManifestIcons, ManifestBrowserAction, ExtensionInfo, ExtensionCompiler, ManifestBrowserSpecificSettings } from '../config';
-const webExt = require('web-ext').default;
+import {
+  CwexConfig,
+  ManifestIcons,
+  ManifestBrowserAction,
+  ExtensionInfo,
+  ExtensionCompiler,
+  ManifestBrowserSpecificSettings,
+} from "../config";
+const webExt = require("web-ext").default;
 
 interface MozillaAddonBackground {
   scripts: string[];
@@ -37,7 +44,9 @@ const buildBrowserAction = (config: CwexConfig): ManifestBrowserAction => {
   return {};
 };
 
-const buildOptionsUi = (config: CwexConfig): MozillaAddonOptionsUi | undefined => {
+const buildOptionsUi = (
+  config: CwexConfig
+): MozillaAddonOptionsUi | undefined => {
   if (config.manifestOptions?.options_ui) {
     return {
       page: config.manifestOptions.options_ui.page,
@@ -70,12 +79,14 @@ const buildExtensionData = (config: CwexConfig): MozillaAddon | null => {
   };
 };
 
-export const generateExtensionInfo = async(config: CwexConfig): Promise<ExtensionInfo> => {
+export const generateExtensionInfo = async (
+  config: CwexConfig
+): Promise<ExtensionInfo> => {
   const extensionData = buildExtensionData(config);
   return {
-    content: extensionData ? JSON.stringify(extensionData, null, 2): '',
-    fileName: 'manifest.json',
-    fileType: 'json',
+    content: extensionData ? JSON.stringify(extensionData, null, 2) : "",
+    fileName: "manifest.json",
+    fileType: "json",
   };
 };
 
@@ -86,5 +97,6 @@ export const compileExtension: ExtensionCompiler = async (opts) => {
     sourceDir: opts.extensionFilesDir,
     overwriteDest: true,
     artifactsDir: opts.extensionBuildOutputDir,
+    filename: opts.config.outFile,
   });
 };

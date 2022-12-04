@@ -1,18 +1,15 @@
-import { readFileSync } from 'fs';
-import path from 'path';
-import findUp from 'find-up';
-import yaml from 'yaml';
-import log from './utils/logger';
+import { readFileSync } from "fs";
+import path from "path";
+import findUp from "find-up";
+import yaml from "yaml";
+import log from "./utils/logger";
 
 export enum EXTENSION_TARGET {
-  CHROME = 'chrome',
-  MOZILLA = 'mozilla',
+  CHROME = "chrome",
+  MOZILLA = "mozilla",
 }
 
-export const CONFIG_FILE_NAMES = [
-  'cwex.yml',
-  '.cwexrc',
-];
+export const CONFIG_FILE_NAMES = ["cwex.yml", ".cwexrc"];
 
 interface ManifestIconMap {
   16: string;
@@ -36,7 +33,10 @@ interface ManifestSettingsOptions {
   open_in_tab: boolean;
 }
 
-type ManifestContentScriptRunAtOption = 'document_idle' | 'document_start' | 'document_end';
+type ManifestContentScriptRunAtOption =
+  | "document_idle"
+  | "document_start"
+  | "document_end";
 export interface ManifestContentScriptOptions {
   matches: string[];
   css?: string[];
@@ -146,7 +146,7 @@ export interface ManifestOptions {
    * specify how this extension will behave if allowed to run in incognito mode
    * https://developer.chrome.com/extensions/manifest/incognito
    */
-  incognito?: 'spanning' | 'split' | 'not_allowed';
+  incognito?: "spanning" | "split" | "not_allowed";
 
   /**
    * the version of chrome that your extension requires
@@ -195,6 +195,9 @@ export interface CwexConfig {
   /** directory where the build would be compiled to */
   outDir: string;
 
+  /** name of the file for the compiled extension */
+  outFile?: string;
+
   /** path to script to execute before compiling extension */
   beforeCompile?: string;
 
@@ -211,7 +214,9 @@ export interface ExtensionInfo {
   fileType: string;
 }
 
-export type ExtensionInfoGenerator = (config: CwexConfig) => Promise<ExtensionInfo>;
+export type ExtensionInfoGenerator = (
+  config: CwexConfig
+) => Promise<ExtensionInfo>;
 
 export interface ExtensionCompilerOption {
   extensionFilesDir: string;
@@ -219,33 +224,35 @@ export interface ExtensionCompilerOption {
   config: CwexConfig;
 }
 
-export type ExtensionCompiler = (opts: ExtensionCompilerOption) => Promise<boolean>;
+export type ExtensionCompiler = (
+  opts: ExtensionCompilerOption
+) => Promise<boolean>;
 
 export const defaultConfig: CwexConfig = {
   include: [],
   exclude: [],
   targets: [...Object.values(EXTENSION_TARGET)],
-  rootDir: './',
-  outDir: 'out',
+  rootDir: "./",
+  outDir: "out",
 };
 
 export const getConfigFile = async () => {
   return await findUp(CONFIG_FILE_NAMES);
 };
 
-export const getConfig = async (configPath = '') => {
+export const getConfig = async (configPath = "") => {
   const pathToConfig = configPath ? configPath : await getConfigFile();
   let config = { ...defaultConfig };
   if (pathToConfig) {
-    log('Config file found:', pathToConfig);
+    log("Config file found:", pathToConfig);
     try {
-      config = { ...config, ...yaml.parse(readFileSync(pathToConfig, 'utf8')) };
+      config = { ...config, ...yaml.parse(readFileSync(pathToConfig, "utf8")) };
     } catch (err) {
-      log('The config file is invalid. Check that you have a valid YAML file.');
+      log("The config file is invalid. Check that you have a valid YAML file.");
       throw err;
     }
   } else {
-    log('Config file not found.');
+    log("Config file not found.");
   }
 
   return config;
